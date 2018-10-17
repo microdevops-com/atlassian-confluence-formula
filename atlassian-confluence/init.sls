@@ -1,12 +1,10 @@
 {% from 'atlassian-confluence/map.jinja' import confluence with context %}
 
-include:
-  - java
-
 confluence-dependencies:
   pkg.installed:
     - pkgs:
-      - libxslt
+      - libxslt1.1
+      - xsltproc
 
 confluence:
   file.managed:

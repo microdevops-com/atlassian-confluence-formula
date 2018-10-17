@@ -1,8 +1,7 @@
 atlassian-confluence:
+  version: 6.12.0
+  dir: /opt/atlassian/confluence
+  user: confluence
+  group: confluence
   ajp_port: 8009
   http_port: 8090
-  crowdSSO: True
-  crowd:
-    application.name: Example Confluence
-    application.password: SecretPassword
-    crowd.base.url: http://crowd.example.com/crowd/
