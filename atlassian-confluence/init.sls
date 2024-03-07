@@ -38,7 +38,6 @@ nginx_files_1:
                 server_name {{ pillar["atlassian-confluence"]["http_proxyName"] }};
                 ssl_certificate /opt/acme/cert/atlassian-confluence_{{ pillar["atlassian-confluence"]["http_proxyName"] }}_fullchain.cer;
                 ssl_certificate_key /opt/acme/cert/atlassian-confluence_{{ pillar["atlassian-confluence"]["http_proxyName"] }}_key.key;
-                client_max_body_size 200M;
                 client_body_buffer_size 128k;
                 location / {
                     proxy_pass http://localhost:{{ pillar["atlassian-confluence"]["http_port"] }};
