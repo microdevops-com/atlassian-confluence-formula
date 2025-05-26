@@ -1,5 +1,6 @@
 {% if pillar["atlassian-confluence"] is defined %}
-{% from 'atlassian-confluence/map.jinja' import confluence with context %}
+  {% from "atlassian-confluence/map.jinja" import confluence with context %}
+  {% from "acme/macros.jinja" import verify_and_issue %}
 
 nginx_install:
   pkg.installed:
@@ -29,9 +30,20 @@ nginx_files_1:
             gzip_vary on;
             gzip_proxied any;
             client_max_body_size 1000m;
+  {%- if pillar["atlassian-confluence"]["nginx_forwards"] is defined %}
+    {%- for domain in pillar["atlassian-confluence"]["nginx_forwards"] %}
+            server {
+                listen 443 ssl;
+                server_name {{ domain }};
+                ssl_certificate /opt/acme/cert/atlassian-confluence_{{ domain }}_fullchain.cer;
+                ssl_certificate_key /opt/acme/cert/atlassian-confluence_{{ domain }}_key.key;
+                return 301 https://{{ pillar["atlassian-confluence"]["http_proxyName"] }}$request_uri;
+            }
+    {%- endfor %}
+  {%- endif %}
             server {
                 listen 80;
-                return 301 https://$host$request_uri;
+                return 301 https://{{ pillar["atlassian-confluence"]["http_proxyName"] }}$request_uri;
             }
             server {
                 listen 443 ssl;
@@ -52,10 +64,18 @@ nginx_files_2:
   file.absent:
     - name: /etc/nginx/sites-enabled/default
 
-nginx_cert:
-  cmd.run:
-    - shell: /bin/bash
-    - name: "/opt/acme/home/{{ pillar["atlassian-confluence"]["acme_account"] }}/verify_and_issue.sh atlassian-confluence {{ pillar["atlassian-confluence"]["http_proxyName"] }}"
+  {%- if pillar["atlassian-confluence"]["acme_configs"] is not defined %}
+
+    {{ verify_and_issue(pillar["atlassian-confluence"]["acme_account"], "atlassian-confluence", pillar["atlassian-confluence"]["http_proxyName"]) }}
+
+  {%- else %}
+
+    {% for acme_config in pillar["atlassian-confluence"]["acme_configs"] %}
+
+      {{ verify_and_issue(acme_config["name"], "atlassian-confluence", acme_config["domains"]) }}
+
+    {%- endfor%}
+  {%- endif %}
 
 nginx_reload:
   cmd.run:
