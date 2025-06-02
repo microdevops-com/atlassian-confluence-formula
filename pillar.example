@@ -1,7 +1,33 @@
 atlassian-confluence:
-  version: 6.15.4
+  addon:
+    source: 'salt://atlassian/addon/atlassian-addon-v1.2.3/atlassian-addon.addon'
+    target: '/opt/atlassian/atlassian-addon.addon'
+    javaopts: '-javaagent:/opt/atlassian/atlassian-addon.addon'
+  version: 9.2.4
+  acme_configs:
+    - name: example_com
+      domains:
+        - confluence.example.com
+    - name: new-exmpl3_com
+      domains:
+        - confluence.new-exmpl3.com
+        - confluence1.new-exmpl3.com
+        - confluence2.new-exmpl3.com
+  nginx_forwards:
+    - confluence.example.com
+    - confluence1.new-exmpl3.com
+    - confluence2.new-exmpl3.com
   dir: /opt/atlassian/confluence
   user: confluence
   group: confluence
-  ajp_port: 8009
-  http_port: 8090
+  http_port: 8080
+  http_scheme: https
+  http_proxyName: confluence.new-exmpl3.com
+  http_proxyPort: 443
+  catalina_opts: -Xms1536m -Xmx6144m
+  db:
+    type: postgres72
+    schema: public
+    url: jdbc:postgresql://localhost:5432/confluence-example
+    username: confluence-example
+    password: ZXXXXXXzzzZZ
