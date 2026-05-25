@@ -4,6 +4,7 @@ atlassian-confluence:
     target: '/opt/atlassian/atlassian-addon.addon'
     javaopts: '-javaagent:/opt/atlassian/atlassian-addon.addon'
   version: 9.2.4
+  java_version: 21
   acme_configs:
     - name: example_com
       domains:
