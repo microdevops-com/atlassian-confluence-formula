@@ -95,7 +95,7 @@ confluence-dependencies:
     - pkgs:
       - libxslt1.1
       - xsltproc
-      - openjdk-17-jdk
+      - openjdk-{{ pillar["atlassian-confluence"].get("java_version", 17) }}-jdk
 
 confluence:
   file.managed:
